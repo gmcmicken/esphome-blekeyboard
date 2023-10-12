@@ -21,7 +21,7 @@ void Esp32BleKeyboard::setup() {
     
   pServer = BLEDevice::getServer();
   pServer->advertiseOnDisconnect(this->reconnect_);
-  pServer->getAdvertising()->setScanFilter(false,true);
+  pServer->getAdvertising()->setScanFilter(true,false);
   
   bleKeyboard.releaseAll();
 }
