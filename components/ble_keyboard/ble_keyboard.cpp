@@ -19,11 +19,13 @@ void Esp32BleKeyboard::setup() {
 
   bleKeyboard.begin();
 
-  BLEDevice::setSecurityPasskey( 823497 );
+  BLEDevice::setSecurityIOCap(BLE_HS_IO_DISPLAY_ONLY);
+  BLEDevice::setSecurityAuth(true, true, true);
+  BLEDevice::setSecurityPasskey(823497);
+
   pServer = BLEDevice::getServer();
-
   pServer->advertiseOnDisconnect(this->reconnect_);
-
+  
   bleKeyboard.releaseAll();
 }
 
