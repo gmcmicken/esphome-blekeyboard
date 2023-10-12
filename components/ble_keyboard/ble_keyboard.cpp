@@ -35,8 +35,7 @@ void Esp32BleKeyboard::stop() {
 
   if (ids.size() > 0) {
     for (uint16_t &id : ids) {
-      pInfo = BLEServer::getPeerIDInfo(id);
-      BLEDevice::whiteListAdd( pInfo->getIdAddress() );
+      BLEDevice::whiteListAdd( BLEServer::getPeerIDInfo(id)->getIdAddress() );
       pServer->disconnect(id);
     }
   } else {
