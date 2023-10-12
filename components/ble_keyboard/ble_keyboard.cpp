@@ -13,19 +13,25 @@
 namespace esphome {
 namespace ble_keyboard {
 static const char *const TAG = "ble_keyboard";
-
+static void my_gap_event_handler(esp_gap_ble_cb_event_t  event, esp_ble_gap_cb_param_t* param) {
+  switch(event){
+      case ESP_GAP_BLE_AUTH_CMPL_EVT:{
+        BLEAddress address = BLEAddress(param->ble_security.auth_cmpl.bd_addr);
+        BLEDevice::whiteListAdd(address);
+        break;
+     }
+  }
+}
 void Esp32BleKeyboard::setup() {
   ESP_LOGI(TAG, "Setting up...");
 
   bleKeyboard.begin();
-
-  BLEDevice::setSecurityPasskey(823497);
-  BLEDevice::setSecurityIOCap(BLE_HS_IO_KEYBOARD_ONLY);
-  BLEDevice::setSecurityAuth(true,true,false);
-  BLEDevice::setSecurityPasskey(823497);
-
+  
+  BLEDevice::setCustomGapHandler(my_gap_event_handler);
+    
   pServer = BLEDevice::getServer();
   pServer->advertiseOnDisconnect(this->reconnect_);
+  pServer->getAdvertising()->setScanFilter(false,true);
   
   bleKeyboard.releaseAll();
 }
