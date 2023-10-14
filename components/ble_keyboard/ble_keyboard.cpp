@@ -21,7 +21,7 @@ void Esp32BleKeyboard::setup() {
     
   pServer = BLEDevice::getServer();
   pServer->advertiseOnDisconnect(this->reconnect_);
-  pServer->getAdvertising()->setScanFilter(false,false);
+  pServer->getAdvertising()->setScanFilter( !this->reconnect_, !this->reconnect_ );
   
   bleKeyboard.releaseAll();
 }
@@ -32,10 +32,11 @@ void Esp32BleKeyboard::stop() {
   }
 
   std::vector<uint16_t> ids = pServer->getPeerDevices();
-
+  BLEConnInfo *pInfo = 
   if (ids.size() > 0) {
     for (uint16_t &id : ids) {
-      BLEDevice::whiteListAdd( BLEServer::getPeerIDInfo(id)->getIdAddress() );
+      BLEConnInfo *pInfo = pServer->getPeerIDInfo(id)
+      BLEDevice::whiteListAdd( pInfo->getIdAddress() );
       pServer->disconnect(id);
     }
   } else {
